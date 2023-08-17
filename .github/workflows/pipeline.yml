@@ -42,7 +42,7 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run Build
-      - uses: actions/updload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: dist
           path: dist
