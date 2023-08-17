@@ -4,9 +4,21 @@ on:
   push:
     branches:
       - main
+      - develop
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
-  deploy:
+  avoid_reduncy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Redudant Builds
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+  Lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,12 +27,44 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 14.21.3
-      - name: install Dependencies demo 
-        run: npm install --no-audit --no-fund --no-optional
-      - name: Build
-        run: npm run build
-      - name: Test Unit
-        run: npm run test
+      - name: install Dependencies demo
+        run: npm ci
       - name: lint
         run: npm run eslint
 
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.21.3
+      - name: install Dependencies demo
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
+
+  test:
+    needs: [Lint, Build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14.21.3
+      - name: install Dependencies demo
+        run: npm ci
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+      - name: Test
+        run: npm run test
