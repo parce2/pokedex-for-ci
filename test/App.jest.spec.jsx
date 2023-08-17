@@ -36,6 +36,6 @@ describe('<App />', () => {
     await act(async () => {
       render(<App />)
     })
-    expect(screen.getByTestId('erro')).toBeVisible()
+    expect(screen.getByTestId('error')).toBeVisible()
   })
 })
