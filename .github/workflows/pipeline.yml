@@ -16,7 +16,9 @@ jobs:
         with:
           node-version: 14.21.3
       - name: install Dependencies demo 
-        run: npm install
+        run: npm install --no-audit --no-fund --no-optional
+      - name: Build
+        run: npm run build
       - name: Test Unit
         run: npm run test
       - name: lint
