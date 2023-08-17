@@ -41,7 +41,7 @@ jobs:
       - name: install Dependencies demo
         run: npm ci
       - name: Build
-        run: npm run Build
+        run: npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: dist
